@@ -162,9 +162,12 @@ export default class HomeScreen extends React.Component {
                       {timestamp: saturday_hi.timestamp, day: 'Saturday', hi: saturday_hi.max, low: saturday_low.low, icon: saturday_hi.icon},
                       {timestamp: sunday_hi.timestamp, day: 'Sunday', hi: sunday_hi.max, low: sunday_low.low, icon: sunday_hi.icon}];
 
+     forcast.shift();
      forcast.sort(function(a, b){
        return a.timestamp-b.timestamp
      });
+
+
 
      this.setState({forcast: forcast});
 
