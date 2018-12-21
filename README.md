@@ -9,3 +9,5 @@ and pulls back a the current weather + the five day forcast.
 ##### It's also helpful to install the Expo mobile app: https://expo.io/tools
 ##### Once expo is installed then do a npm install
 ##### expo start
+## Running Tests
+Basic jest test - npm test 
