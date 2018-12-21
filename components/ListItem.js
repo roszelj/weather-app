@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableHighlight, Platform, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+
+import { Ionicons } from '@expo/vector-icons';
 
 export default class ListItem extends Component {
 
 	constructor(props) {
 		super(props);
-		this.click = this.click.bind(this);
 	}
 
   componentDidMount() {
-
 
   }
 
@@ -17,36 +17,25 @@ export default class ListItem extends Component {
     title: 'Case Details',
   };
 
-	click() {
-		//alert("Clicou para abrir a conversa: "+this.props.data.id);
-    //console.log(this.props.data.id);
-    this.props.navigation.navigate('Details', {
-      id: this.props.data.id,
-			fetchCase: true,
-      otherParam: 'Case Details'
-    });
-
-		//console.log(this.props.data.id);
-	}
-
 	render() {
 
 		return (
-
-  			<TouchableHighlight onPress={this.click} underlayColor="#CCCCCC">
+				(!!this.props.data.low &&
+  			<View>
           <View style={styles.container}>
     				<View style={styles.item}>
               <Text style={styles.text}>{this.props.data.day}</Text>
               <View style={styles.temps}>
-                <Text style={styles.temps_text}>H: {this.props.data.hi}</Text>
-                <Text style={styles.temps_text}>L: {this.props.data.low}</Text>
+                <Text style={styles.temps_text}>H: {Math.ceil(this.props.data.hi)}&deg;</Text>
+                <Text style={styles.temps_text}>L: {Math.ceil(this.props.data.low)}&deg;</Text>
               </View>
     				</View>
             <View>
-                <Text>{this.props.data.hi}</Text>
+							<Ionicons name={this.props.data.icon} style={styles.weatherIcon}/>
             </View>
           </View>
-  			</TouchableHighlight>
+  			</View>
+			)
 
 		);
 	}
@@ -91,10 +80,16 @@ const styles = StyleSheet.create({
 		marginLeft:10
 	},
   text: {
-    fontSize: 34,
+    fontSize: 24,
   },
 	nome:{
 		fontSize:15,
 		fontWeight:'bold'
-	}
+	},
+	weatherIcon: {
+    fontSize: 34,
+    color: '#666666',
+    padding:10,
+		justifyContent: 'center'
+  },
 });

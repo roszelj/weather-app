@@ -18,51 +18,39 @@ export class Forcast extends React.Component {
     this.state = {
       visable: false,
       city: this.props.name,
-      todayWeatherData: this.props.todayWeatherData
+      todayWeatherData: this.props.todayWeatherData,
+      icon: '',
     }
+
   }
 
   componentDidMount() {
     //console.log("state", this.props.navigation.state.params);
+
   }
 
   componentDidUpdate(prevProps, prevState) {
 
-    //this.props.todayWeatherData.map((item, index) => {
+    if(prevProps.todayWeatherData !== this.props.todayWeatherData) {
+        this.setState({todayWeatherData: this.props.todayWeatherData});
+        //console.log(this.state.todayWeatherData[0].name);
+        if(this.props.todayWeatherData[0].weather[0].main === 'Clouds'){
+          this.setState({icon: 'ios-cloudy'});
+        }else if(this.props.todayWeatherData[0].weather[0].main === 'Clear'){
+          this.setState({icon: 'ios-party-sunny'});
+        }else{
+          this.setState({icon: 'ios-sunny'});
+        }
 
-
-      if(prevProps.todayWeatherData !== this.props.todayWeatherData) {
-          console.log("got here");
-          this.setState({todayWeatherData: this.props.todayWeatherData});
-          //console.log(this.state.todayWeatherData[0].name);
-      }
-
-
-  //  });
-
-        //this.setState({city: this.props.name});
-        /*
-console.log(prevProps);
-      if(this.props.todayWeatherData[0].name !== prevProps.todayWeatherData[0].name){
-        this.setState(prevState => ({
-          todayWeatherData: [...prevProps.todayWeatherData, this.props.todayWeatherData]
-        }))
-
-        console.log(todayWeatherData);
-      }
-      */
-/*
-      this.setState(prevState => ({
-        itemList: prevState.todayWeatherData.map(
-          obj => (obj._id === 1234 ? Object.assign(obj, { description: "New Description" }) : obj)
-        )
-      }));
-*/
+    }
   }
 
   render() {
 
+
+
     return (
+
         (this.state.todayWeatherData[0].name > '' ?
 
       <View style={styles.container}>
@@ -70,7 +58,7 @@ console.log(prevProps);
           <Text style={styles.temps}>{Math.ceil(this.state.todayWeatherData[0].main.temp)}&deg; &nbsp;
             {(this.state.todayWeatherData[0].weather[0].description === 'broken clouds' ? 'Partly Cloudy' : this.state.todayWeatherData[0].weather[0].description.charAt(0).toUpperCase() + this.state.todayWeatherData[0].weather[0].description.slice(1))}
           </Text>
-          <Ionicons name="ios-partly-sunny" style={styles.weatherIcon}/>
+          <Ionicons name={this.state.icon} style={styles.weatherIcon}/>
           <View style={styles.bottom}>
               <View style={styles.item}><Text style={styles.temps}>H: {Math.ceil(this.state.todayWeatherData[0].main.temp_max)}&deg;</Text></View>
               <View style={styles.item}><Text style={styles.temps}>L: {Math.ceil(this.state.todayWeatherData[0].main.temp_min)}&deg;</Text></View>
@@ -86,13 +74,12 @@ console.log(prevProps);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f3f3f3',
     paddingTop:10,
-    flexDirection: 'column'
-
+    flexDirection: 'column',
   },
   weekForcast: {
 
@@ -108,10 +95,11 @@ const styles = StyleSheet.create({
     padding:10
   },
   bottom: {
-    flex:1,
+
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start'
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingBottom: 20
 
   },
   left: {

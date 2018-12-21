@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   View,
   Alert,
-  FlatList
+  FlatList,
+  Keyboard
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import axios from 'axios';
@@ -108,7 +109,17 @@ export default class HomeScreen extends React.Component {
       const fiveday_array = [];
 
       Object.entries(rest).map(([key, value]) => {
-        fiveday_array.push({dt: moment(value.dt_txt).format('HH'), day: moment(value.dt_txt).format('dddd'), max: value.main.temp_max, low: value.main.temp_min, desc: value.weather[0].description});
+        let icon = '';
+        switch(value.weather[0].main){
+          case 'Clouds':
+            icon = 'ios-cloudy';
+           break;
+          case 'Clear':
+            icon = 'ios-sunny';
+           break;
+        }
+
+        fiveday_array.push({timestamp: value.dt, dt: moment(value.dt_txt).format('HH'), day: moment(value.dt_txt).format('dddd'), max: value.main.temp_max, low: value.main.temp_min, icon: icon, desc: value.weather[0].description});
       }
      );
 
@@ -121,31 +132,67 @@ export default class HomeScreen extends React.Component {
        return low.low <= item.low  ? low : item;
      },0);
 
-     const forcast = [{day: 'Monday', hi: monday_hi.max, low: monday_low.low}];
+     let tuesday_hi = fiveday_array.filter(({day}) => day === 'Tuesday').reduce((max, item) => {
+       return item.max >= max.max ? item : max;
+     },{max: Number.MIN_SAFE_INTEGER});
+
+     let tuesday_low = fiveday_array.filter(({day}) => day === 'Tuesday').reduce((low, item) => {
+       return low.low <= item.low  ? low : item;
+     },0);
+
+     let wednesday_hi = fiveday_array.filter(({day}) => day === 'Wednesday').reduce((max, item) => {
+       return item.max >= max.max ? item : max;
+     },{max: Number.MIN_SAFE_INTEGER});
+
+     let wednesday_low = fiveday_array.filter(({day}) => day === 'Wednesday').reduce((low, item) => {
+       return low.low <= item.low  ? low : item;
+     },0);
+
+     let thursday_hi = fiveday_array.filter(({day}) => day === 'Thursday').reduce((max, item) => {
+       return item.max >= max.max ? item : max;
+     },{max: Number.MIN_SAFE_INTEGER});
+
+     let thursday_low = fiveday_array.filter(({day}) => day === 'Thursday').reduce((low, item) => {
+       return low.low <= item.low  ? low : item;
+     },0);
+
+     let friday_hi = fiveday_array.filter(({day}) => day === 'Friday').reduce((max, item) => {
+       return item.max >= max.max ? item : max;
+     },{max: Number.MIN_SAFE_INTEGER});
+
+     let friday_low = fiveday_array.filter(({day}) => day === 'Friday').reduce((low, item) => {
+       return low.low <= item.low  ? low : item;
+     },0);
+
+     let saturday_hi = fiveday_array.filter(({day}) => day === 'Saturday').reduce((max, item) => {
+       return item.max >= max.max ? item : max;
+     },{max: Number.MIN_SAFE_INTEGER});
+
+     let saturday_low = fiveday_array.filter(({day}) => day === 'Saturday').reduce((low, item) => {
+       return low.low <= item.low  ? low : item;
+     },0);
+
+     let sunday_hi = fiveday_array.filter(({day}) => day === 'Sunday').reduce((max, item) => {
+       return item.max >= max.max ? item : max;
+     },{max: Number.MIN_SAFE_INTEGER});
+
+     let sunday_low = fiveday_array.filter(({day}) => day === 'Sunday').reduce((low, item) => {
+       return low.low <= item.low  ? low : item;
+     },0);
+
+     const forcast = [{timestamp: monday_hi.timestamp, day: 'Monday', hi: monday_hi.max, low: monday_low.low, icon: monday_hi.icon},
+                      {timestamp: tuesday_hi.timestamp, day: 'Tuesday', hi: tuesday_hi.max, low: tuesday_low.low, icon: tuesday_hi.icon},
+                      {timestamp: wednesday_hi.timestamp, day: 'Wednesday', hi: wednesday_hi.max, low: wednesday_low.low, icon: wednesday_hi.icon},
+                      {timestamp: thursday_hi.timestamp, day: 'Thursday', hi: thursday_hi.max, low: thursday_low.low, icon: thursday_hi.icon},
+                      {timestamp: friday_hi.timestamp, day: 'Friday', hi: friday_hi.max, low: friday_low.low, icon: friday_hi.icon},
+                      {timestamp: saturday_hi.timestamp, day: 'Saturday', hi: saturday_hi.max, low: saturday_low.low, icon: saturday_hi.icon},
+                      {timestamp: sunday_hi.timestamp, day: 'Sunday', hi: sunday_hi.max, low: sunday_low.low, icon: sunday_hi.icon}];
+
+     forcast.sort(function(a, b){
+       return a.timestamp-b.timestamp
+     });
 
      this.setState({forcast: forcast});
-     /*
-     let highest = fiveday_array.reduce((max, hi) => {
-
-          return hi.max >= max.max ? hi : max;
-     }, {
-         // The assumption here is that no amount is lower than a Double-precision float can go.
-         max: Number.MIN_SAFE_INTEGER
-     });
-     */
-
-     // So, we can convert the object to the amount like so:
-     //highest = highest.max;
-
-     console.log(monday_hi.max);
-
-
-      //console.log("highest "+ highest)
-      //console.log(fiveday_array);
-      //const result = response.data.list.map(day => ({ value: 'date' , text: day.dt_txt}));
-
-      //console.log(result);
-
 
     } catch (error) {
       //console.error(error);
@@ -174,33 +221,28 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.zipcode}>
-          <ZipCodeInput getWeather={this.getWeather} clear={this.state.clearZipCode}/>
+
+            <ZipCodeInput getWeather={this.getWeather} clear={this.state.clearZipCode}/>
+
         </View>
           <View style={styles.forcast}>
             <Forcast todayWeatherData={this.state.todayWeatherData}/>
+
+            <FlatList
+              style={{flexGrow: 1}}
+               data={this.state.forcast}
+               keyExtractor={this._keyExtractor}
+               onRefresh={() => this.handleRefresh()}
+               refreshing={this.state.isRefreshing}
+               onEndThreshold={0}
+               renderItem={ ({item}) => <ListItem navigation={this.props.navigation} data={item} /> }
+            />
           </View>
 
-          <FlatList
-             data={this.state.forcast}
-             keyExtractor={this._keyExtractor}
-             onRefresh={() => this.handleRefresh()}
-             refreshing={this.state.isRefreshing}
-             onEndThreshold={0}
-             renderItem={ ({item}) => <ListItem navigation={this.props.navigation} data={item} /> }
-          />
+
       </View>
     );
   }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
-  };
 }
 
 const styles = StyleSheet.create({
@@ -218,7 +260,6 @@ const styles = StyleSheet.create({
   forcast: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
     alignItems: 'stretch',
 
   },
