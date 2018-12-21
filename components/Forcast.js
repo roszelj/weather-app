@@ -75,15 +75,6 @@ console.log(prevProps);
               <View style={styles.item}><Text style={styles.temps}>H: {Math.ceil(this.state.todayWeatherData[0].main.temp_max)}&deg;</Text></View>
               <View style={styles.item}><Text style={styles.temps}>L: {Math.ceil(this.state.todayWeatherData[0].main.temp_min)}&deg;</Text></View>
           </View>
-            <View style={styles.left}>
-              <View>
-                <Text>Test</Text>
-              </View>
-              <View>
-                <Text>Test</Text>
-              </View>
-            </View>
-
       </View>
 
       : <View style={styles.bottom}><Text>(Enter Zipcode to fetch your 5 day forcast)</Text></View>)
