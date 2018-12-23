@@ -93,10 +93,17 @@ export default class HomeScreen extends React.Component {
           case 'Clear':
             icon = 'ios-sunny';
            break;
+          case 'Rain':
+          icon = 'ios-rainy';
+          break;
+
         }
-        fiveday_array.push({timestamp: value.dt, dt: moment(value.dt_txt).format('HH'), day: moment(value.dt_txt).format('dddd'), max: value.main.temp_max, low: value.main.temp_min, icon: icon, desc: value.weather[0].description});
+        fiveday_array.push({timestamp: value.dt, dt: value.dt_txt, day: moment(value.dt_txt).format('dddd'), max: value.main.temp_max, low: value.main.temp_min, icon: icon, desc: value.weather[0].description});
       }
      );
+
+     //fiveday_array.shift();
+
 
      let monday_hi = fiveday_array.filter(({day}) => day === 'Monday').reduce((max, item) => {
        return item.max >= max.max ? item : max;
@@ -154,20 +161,29 @@ export default class HomeScreen extends React.Component {
        return low.low <= item.low  ? low : item;
      },0);
 
-     const forcast = [{timestamp: monday_hi.timestamp, day: 'Monday', hi: monday_hi.max, low: monday_low.low, icon: monday_hi.icon},
-                      {timestamp: tuesday_hi.timestamp, day: 'Tuesday', hi: tuesday_hi.max, low: tuesday_low.low, icon: tuesday_hi.icon},
-                      {timestamp: wednesday_hi.timestamp, day: 'Wednesday', hi: wednesday_hi.max, low: wednesday_low.low, icon: wednesday_hi.icon},
-                      {timestamp: thursday_hi.timestamp, day: 'Thursday', hi: thursday_hi.max, low: thursday_low.low, icon: thursday_hi.icon},
-                      {timestamp: friday_hi.timestamp, day: 'Friday', hi: friday_hi.max, low: friday_low.low, icon: friday_hi.icon},
-                      {timestamp: saturday_hi.timestamp, day: 'Saturday', hi: saturday_hi.max, low: saturday_low.low, icon: saturday_hi.icon},
-                      {timestamp: sunday_hi.timestamp, day: 'Sunday', hi: sunday_hi.max, low: sunday_low.low, icon: sunday_hi.icon}];
+     const forcast = [{timestamp: monday_hi.timestamp, day: 'Monday', hi: monday_hi.max, low: monday_low.low, icon: monday_hi.icon, desc: monday_hi.desc},
+                      {timestamp: tuesday_hi.timestamp, day: 'Tuesday', hi: tuesday_hi.max, low: tuesday_low.low, icon: tuesday_hi.icon, desc: tuesday_hi.desc},
+                      {timestamp: wednesday_hi.timestamp, day: 'Wednesday', hi: wednesday_hi.max, low: wednesday_low.low, icon: wednesday_hi.icon, desc: wednesday_hi.desc},
+                      {timestamp: thursday_hi.timestamp, day: 'Thursday', hi: thursday_hi.max, low: thursday_low.low, icon: thursday_hi.icon, desc: thursday_hi.desc},
+                      {timestamp: friday_hi.timestamp, day: 'Friday', hi: friday_hi.max, low: friday_low.low, icon: friday_hi.icon, desc: friday_hi.desc},
+                      {timestamp: saturday_hi.timestamp, day: 'Saturday', hi: saturday_hi.max, low: saturday_low.low, icon: saturday_hi.icon, desc: saturday_hi.desc},
+                      {timestamp: sunday_hi.timestamp, day: 'Sunday', hi: sunday_hi.max, low: sunday_low.low, icon: sunday_hi.icon, desc: sunday_hi.desc}];
 
-     forcast.shift();
      forcast.sort(function(a, b){
-       return a.timestamp-b.timestamp
+
+       let comparison = 0;
+       if (a.timestamp > b.timestamp) {
+         comparison = 1;
+       } else if (a.timestamp < b.timestamp) {
+         comparison = -1;
+       }
+
+       return comparison;
      });
 
+     forcast.slice();
 
+     console.log(forcast);
 
      this.setState({forcast: forcast});
 
