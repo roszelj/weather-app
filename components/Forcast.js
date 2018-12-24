@@ -34,12 +34,20 @@ export class Forcast extends React.Component {
     if(prevProps.todayWeatherData !== this.props.todayWeatherData) {
         this.setState({todayWeatherData: this.props.todayWeatherData});
         //console.log(this.state.todayWeatherData[0].name);
-        if(this.props.todayWeatherData[0].weather[0].main === 'Clouds'){
-          this.setState({icon: 'ios-cloudy'});
-        }else if(this.props.todayWeatherData[0].weather[0].main === 'Clear'){
-          this.setState({icon: 'ios-party-sunny'});
-        }else{
-          this.setState({icon: 'ios-sunny'});
+
+        switch(this.props.todayWeatherData[0].weather[0].main){
+          case 'Clouds':
+            this.setState({icon: 'ios-cloudy'});
+           break;
+          case 'Clear':
+            this.setState({icon: 'ios-sunny'});
+           break;
+          case 'Rain':
+            this.setState({icon: 'ios-rainy'});
+          case 'Snow':
+            this.setState({icon: 'ios-snow'});
+          break;
+
         }
 
     }
